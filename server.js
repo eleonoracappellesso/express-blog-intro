@@ -1,4 +1,5 @@
 // importo express 
+const { count } = require('console');
 const express = require('express');
 const { title } = require('process');
 // specifico la porta
@@ -49,36 +50,41 @@ app.get('/', (req, res) => {
     res.send("Server del mio blog");
 });
 
-app.get('/bacheca', (req, res) => {
+// app.get('/bacheca', (req, res) => {
+//     res.json({
+//         posts: posts,
+//         count: posts.length
+//     });
+// });
+
+// root che filtra i post in base ai tags
+app.get("/bacheca", (req, res) => {
+    // dalla query string prendo il tag da filtrare
+    const tagName = req.query.tags;
+    // inizializzo postList con tutti i post
+    let postList = [...posts];
+
+    //se è stato specificato un tag, filtro i post in base a quel tag
+    if (tagName) {
+        postList = posts.filter((post) => {
+            //filtro i post in base ai tag specificati
+            return post.tags.includes(tagName.toLowerCase());
+        });
+        // se non ci sono post con il tag specificato restituisce un errore
+        if (postList.length === 0) {
+            postList = { Errore: `Nessun post contiene il tag ${(req.query.tags).toUpperCase()}` };
+        }
+    }
+    // restituisco un oggetto json con i post filtrati e il conteggio dei post
     res.json({
-        posts: posts,
-        count: posts.length
-    });
-});
-
-
-app.get('/ciambellone', (req, res) => {
-    res.send('<img src="images/ciambellone.jpeg" alt="ciambellone">');
-});
-
-app.get('/cracker', (req, res) => {
-    res.send('<img src="images/cracker_barbabietola.jpeg" alt="cracker-barbabietola">');
-});
-
-app.get('/pane', (req, res) => {
-    res.send('<img src="images/pane_fritto_dolce.jpeg" alt="pane-fritto">');
-});
-
-app.get('/pasta', (req, res) => {
-    res.send('<img src="images/pasta_barbabietola.jpeg" alt="pasta-barbabietola">');
-});
-
-app.get('/torta', (req, res) => {
-    res.send('<img src="images/torta_paesana.jpeg" alt="torta-paesana">');
+        posts: postList,
+        count: postList.length
+    }
+    );
 });
 
 app.all('*', (req, res) => {
-    res.status(404).send('<h1>Not Found !</h1>');
+    res.status(404).send('<h1>Error 404 - Not Found</h1>');
 });
 
 //metto il server in ascolto su localhost alla porta 3000
