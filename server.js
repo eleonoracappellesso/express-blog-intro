@@ -56,6 +56,7 @@ app.get('/bacheca', (req, res) => {
     });
 });
 
+
 app.get('/ciambellone', (req, res) => {
     res.send('<img src="images/ciambellone.jpeg" alt="ciambellone">');
 });
